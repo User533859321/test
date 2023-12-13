@@ -48,50 +48,54 @@
                     'Authorization': `token ${accessToken}`
                 },
                 success: function(gistData) {
-                    // Extract existing data from the Gist
-                    let existingData = gistData.files['data.json'].content ? JSON.parse(gistData.files['data.json'].content) : [];
+                    try {
+                        // Extract existing data from the Gist
+                        let existingData = gistData.files['data.json'].content ? JSON.parse(gistData.files['data.json'].content) : [];
 
-                    // Ensure existingData is an array
-                    if (!Array.isArray(existingData)) {
-                        console.error('Existing data is not an array:', existingData);
-                        // If it's not an array, initialize it as an empty array
-                        existingData = [];
-                    }
-
-                    // New data to be appended
-                    const newData = {
-                        ip: ip,
-                        isp: isp,
-                        country: country,
-                        name: name
-                    };
-
-                    // Append the new data to the existing data
-                    existingData.push(newData);
-
-                    // Update Gist with the combined data
-                    $.ajax({
-                        url: apiUrl,
-                        type: 'PATCH',
-                        dataType: 'json',
-                        headers: {
-                            'Authorization': `token ${accessToken}`
-                        },
-                        contentType: 'application/json',
-                        data: JSON.stringify({
-                            files: {
-                                'data.json': {
-                                    content: JSON.stringify(existingData)
-                                }
-                            }
-                        }),
-                        success: function(response) {
-                            console.log('Data sent to Gist successfully:', response);
-                        },
-                        error: function(error) {
-                            console.error('Error sending data to Gist:', error);
+                        // Ensure existingData is an array
+                        if (!Array.isArray(existingData)) {
+                            console.error('Existing data is not an array:', existingData);
+                            // If it's not an array, initialize it as an empty array
+                            existingData = [];
                         }
-                    });
+
+                        // New data to be appended
+                        const newData = {
+                            ip: ip,
+                            isp: isp,
+                            country: country,
+                            name: name
+                        };
+
+                        // Append the new data to the existing data
+                        existingData.push(newData);
+
+                        // Update Gist with the combined data
+                        $.ajax({
+                            url: apiUrl,
+                            type: 'PATCH',
+                            dataType: 'json',
+                            headers: {
+                                'Authorization': `token ${accessToken}`
+                            },
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                files: {
+                                    'data.json': {
+                                        content: JSON.stringify(existingData)
+                                    }
+                                }
+                            }),
+                            success: function(response) {
+                                console.log('Data sent to Gist successfully:', response);
+                            },
+                            error: function(error) {
+                                console.error('Error updating Gist:', error);
+                            }
+                        });
+                    } catch (parseError) {
+                        console.error('Error parsing Gist data:', parseError);
+                    }
                 },
                 error: function(error) {
                     console.error('Error fetching Gist data:', error);
