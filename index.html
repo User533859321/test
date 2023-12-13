@@ -40,12 +40,13 @@
             // Fetch existing data from the Gist
             $.getJSON(apiUrl, function(gistData) {
                 // Extract existing data from the Gist
-                const existingData = gistData.files['data.json'].content ? JSON.parse(gistData.files['data.json'].content) : [];
+                let existingData = gistData.files['data.json'].content ? JSON.parse(gistData.files['data.json'].content) : [];
 
                 // Ensure existingData is an array
                 if (!Array.isArray(existingData)) {
                     console.error('Existing data is not an array:', existingData);
-                    return;
+                    // If it's not an array, initialize it as an empty array
+                    existingData = [];
                 }
 
                 // New data to be appended
