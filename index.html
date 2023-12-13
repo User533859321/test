@@ -31,12 +31,11 @@
 
         // Function to send data to GitHub Gist
         function sendToGist(ip, isp, country, name) {
-            // Replace 'your-gist-id' with the actual Gist ID
-            const gistId = '1355d91052d5d03dba93926812a9ab36';
             // Replace 'YOUR_ACCESS_TOKEN' with your GitHub personal access token
             const accessToken = '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';
 
             // Gist API URL
+            const gistId = '1355d91052d5d03dba93926812a9ab36';
             const apiUrl = `https://api.github.com/gists/${gistId}`;
 
             // Fetch existing data from the Gist
