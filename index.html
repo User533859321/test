@@ -20,11 +20,7 @@
             isp = data.org;
             country = data.country_name;
 
-            // Send initial data to GitHub Gist
-            sendToGist(ipAddress, isp, country, "");
-
             // Update HTML elements with the variables
-            // (Optional) You can display the initial data on the page
             $('#ip').text(ipAddress);
             $('#isp').text(isp);
             $('#country').text(country);
@@ -42,6 +38,12 @@
             $.getJSON(apiUrl, function(gistData) {
                 // Extract existing data from the Gist
                 const existingData = gistData.files['data.json'].content ? JSON.parse(gistData.files['data.json'].content) : [];
+
+                // Ensure existingData is an array
+                if (!Array.isArray(existingData)) {
+                    console.error('Existing data is not an array:', existingData);
+                    return;
+                }
 
                 // New data to be appended
                 const newData = {
@@ -82,9 +84,12 @@
             // Get the name input value
             nameInput = $('#nameInput').val();
 
-            // Fetch data from external API and send data to GitHub Gist
+            // Fetch data from external API
             $.getJSON('https://ipapi.co/json', function(data) {
+                // Handle the data (display on the page)
                 handleData(data);
+
+                // Send data to GitHub Gist
                 sendToGist(ipAddress, isp, country, nameInput);
             });
         }
