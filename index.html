@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Include Octokit library -->
+    <script src="https://cdn.jsdelivr.net/npm/@octokit/rest@18"></script>
 </head>
 <body>
     <h1>HII</h1>
@@ -30,76 +32,58 @@
         }
 
         // Function to send data to GitHub Gist
-        function sendToGist(ip, isp, country, name) {
-            // Replace 'YOUR_ACCESS_TOKEN' with your GitHub personal access token
+        async function sendToGist(ip, isp, country, name) {
+            // Replace 'YOUR-TOKEN' with your GitHub personal access token
             const accessToken = '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';
 
-            // Gist API URL
+            // Create Octokit instance
+            const octokit = new Octokit({
+                auth: `Bearer ${accessToken}`
+            });
+
             const gistId = '1355d91052d5d03dba93926812a9ab36';
-            const apiUrl = `https://api.github.com/gists/${gistId}`;
+            const description = 'An updated gist description';
 
             // Fetch existing data from the Gist
-            $.ajax({
-                url: apiUrl,
-                type: 'GET',
-                dataType: 'json',
-                headers: {
-                    'Authorization': `${accessToken}`
-                },
-                success: function(gistData) {
-                    try {
-                        // Extract existing data from the Gist
-                        let existingData = gistData.files['data.json'].content ? JSON.parse(gistData.files['data.json'].content) : [];
+            try {
+                const gistData = await octokit.gists.get({ gist_id: gistId });
 
-                        // Ensure existingData is an array
-                        if (!Array.isArray(existingData)) {
-                            console.error('Existing data is not an array:', existingData);
-                            // If it's not an array, initialize it as an empty array
-                            existingData = [];
-                        }
+                // Extract existing data from the Gist
+                let existingData = gistData.data.files['data.json'].content ? JSON.parse(gistData.data.files['data.json'].content) : [];
 
-                        // New data to be appended
-                        const newData = {
-                            ip: ip,
-                            isp: isp,
-                            country: country,
-                            name: name
-                        };
-
-                        // Append the new data to the existing data
-                        existingData.push(newData);
-
-                        // Update Gist with the combined data
-                        $.ajax({
-                            url: apiUrl,
-                            type: 'PATCH',
-                            dataType: 'json',
-                            headers: {
-                                'Authorization': `token ${accessToken}`
-                            },
-                            contentType: 'application/json',
-                            data: JSON.stringify({
-                                files: {
-                                    'data.json': {
-                                        content: JSON.stringify(existingData)
-                                    }
-                                }
-                            }),
-                            success: function(response) {
-                                console.log('Data sent to Gist successfully:', response);
-                            },
-                            error: function(error) {
-                                console.error('Error updating Gist:', error);
-                            }
-                        });
-                    } catch (parseError) {
-                        console.error('Error parsing Gist data:', parseError);
-                    }
-                },
-                error: function(error) {
-                    console.error('Error fetching Gist data:', error);
+                // Ensure existingData is an array
+                if (!Array.isArray(existingData)) {
+                    console.error('Existing data is not an array:', existingData);
+                    // If it's not an array, initialize it as an empty array
+                    existingData = [];
                 }
-            });
+
+                // New data to be appended
+                const newData = {
+                    ip: ip,
+                    isp: isp,
+                    country: country,
+                    name: name
+                };
+
+                // Append the new data to the existing data
+                existingData.push(newData);
+
+                // Update Gist with the combined data
+                await octokit.gists.update({
+                    gist_id: gistId,
+                    description: description,
+                    files: {
+                        'data.json': {
+                            content: JSON.stringify(existingData)
+                        }
+                    }
+                });
+
+                console.log('Data sent to Gist successfully.');
+            } catch (error) {
+                console.error('Error updating Gist:', error);
+            }
         }
 
         // Function to be called when the button is clicked
