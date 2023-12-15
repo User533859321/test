@@ -38,14 +38,14 @@
 
             // Create Octokit instance
             const octokit = new Octokit({
-                auth: `Bearer ${accessToken}`
+                auth: accessToken
             });
 
             const gistId = '1355d91052d5d03dba93926812a9ab36';
             const description = 'An updated gist description';
 
-            // Fetch existing data from the Gist
             try {
+                // Fetch existing data from the Gist
                 const gistData = await octokit.gists.get({ gist_id: gistId });
 
                 // Extract existing data from the Gist
